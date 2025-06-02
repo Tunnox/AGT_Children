@@ -18,25 +18,19 @@ def search():
     
     # SQL query to search for data in DATA_RECORDS table
     sql_query = f"""
-        SELECT * FROM "public"."data_records" 
-        WHERE "title" ILIKE %s OR
-           "first_name" ILIKE %s 
+        SELECT * FROM "public"."AGT_CHILDREN_DATA_RECORDS" 
+        WHERE "first_name" ILIKE %s 
            OR "last_name" ILIKE %s 
            OR "age"::TEXT ILIKE %s 
            OR "gender" ILIKE %s
-           OR "date_of_birth"::TEXT ILIKE %s
-           OR "address" ILIKE %s
-           OR "email" ILIKE %s
-           OR "mobile_number"::TEXT ILIKE %s 
-           OR "status" ILIKE %s  
-           OR "department" ILIKE %s
-           OR "relationship_status" ILIKE %s
-           OR "employement_status" ILIKE %s
+           OR "contact_number"::TEXT ILIKE %s
+           OR "age_group" ILIKE %s
            OR "consent" ILIKE %s
+           OR "birthday" ILIKE %s
     """
     
     # Execute the query with wildcard search
-    cursor.execute(sql_query, [f'%{keyword}%'] * 14)
+    cursor.execute(sql_query, [f'%{keyword}%'] * 8)
     
     results = cursor.fetchall()
     
@@ -49,27 +43,21 @@ def search():
 @app.route('/insert', methods=['GET','POST'])
 def insert():
     if request.method == 'POST':
-        title = request.form['title']
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         age = request.form['age']
         gender = request.form['gender']
-        date_of_birth = request.form['date_of_birth']
-        address = request.form['address']
-        email = request.form['email']
-        mobile_number = request.form['mobile_number']
-        status = request.form['status']
-        department = request.form['department']
-        relationship_status = request.form['relationship_status']
-        employment_status = request.form['employment_status']
+        contact_number = request.form['contact_number']
+        age_group = request.form['age_group']
         consent = request.form['consent']
+        birthday = request.form['birthday']
 
         cursor = connection.cursor()
         
         cursor.execute("""
-            INSERT INTO "public"."data_records" ("title", "first_name", "last_name", "age", "gender", "date_of_birth", "address", "email", "mobile_number", "status", "department", "relationship_status", "employement_status", "consent")
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-        """, (title, first_name, last_name, age, gender,date_of_birth, address, email, mobile_number, status,department, relationship_status, employment_status, consent))
+            INSERT INTO "public"."AGT_CHILDREN_DATA_RECORDS" ("first_name", "last_name", "age", "gender", "contact_number", "age_group", "consent", "birthday")
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        """, (first_name, last_name, age, gender, contact_number, age_group, consent, birthday))
         connection.commit()  # Don't forget to commit the transaction!
         cursor.close()
     
