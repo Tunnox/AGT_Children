@@ -9,7 +9,7 @@ connection = psycopg2.connect(dbname='AGT', user='postgres', password='pgsqtk116
 
 @app.route('/')
 def index():
-    return render_template('child_index.html')
+    return render_template('index.html')
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -37,7 +37,7 @@ def search():
     # Close cursor after fetching results
     cursor.close()
     
-    return render_template('child_index.html', results=results)
+    return render_template('index.html', results=results)
 
 @app.route('/update', methods=['POST'])
 def update():
