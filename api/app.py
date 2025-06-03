@@ -9,7 +9,7 @@ connection = psycopg2.connect(dbname='AGT', user='postgres', password='pgsqtk116
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('child_index.html')
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -37,8 +37,32 @@ def search():
     # Close cursor after fetching results
     cursor.close()
     
-    return render_template('index.html', results=results)
+    return render_template('child_index.html', results=results)
 
+@app.route('/update', methods=['POST'])
+def update():
+    data = request.form
+    cursor = connection.cursor()
+    
+    # SQL query to update the record
+    sql_update = """
+        UPDATE "public"."AGT_CHILDREN_DATA_RECORDS"
+        SET "first_name" = %s, "last_name" = %s, "age" = %s, "gender" = %s, 
+            "contact_number" = %s, "age_group" = %s, "consent" = %s, "birthday" = %s
+        WHERE "first_name" = %s
+    """
+    
+    # Execute the update query
+    cursor.execute(sql_update, (
+        data['first_name'], data['last_name'], data['age'], data['gender'],
+        data['contact_number'], data['age_group'], data['consent'], data['birthday'],
+        data['first_name']
+    ))
+    
+    connection.commit()  # Commit the changes
+    cursor.close()
+    flash('Record updated successfully!')
+    return redirect(url_for('index'))
 
 @app.route('/insert', methods=['GET','POST'])
 def insert():
@@ -85,5 +109,3 @@ def insert_attendance():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
-    
